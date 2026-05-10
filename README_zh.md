@@ -1,3 +1,5 @@
+[English](./README.md) | [中文](./README_zh.md)
+
 # ymailink
 
 **终端邮件管理工具。** 在命令行中完成邮件的列出、阅读、搜索、编写、回复、转发、移动、复制、删除和标记等所有操作。支持 IMAP/SMTP、Outlook（Microsoft Graph API）、Gmail（Google API）和 Exchange 后端。
@@ -258,29 +260,7 @@ pytest tests/
 - **非 IMAP 后端的附件下载**（Outlook/Gmail/Exchange）仅返回元数据 — 这些后端的二进制数据下载暂不支持。
 - **代理支持**：为 Outlook 和 Gmail 后端设置 `HTTPS_PROXY` / `https_proxy` 环境变量。
 
-## 支持的邮箱服务
-
-ymailink 兼容所有支持标准协议/API 的邮件服务商。以下是常用邮箱的配置参考：
-
-| 服务商 | 协议/API | 推荐后端 | 说明 |
-|--------|----------|----------|------|
-| Gmail / Google Workspace | IMAP + SMTP 或 Google API | IMAP+SMTP（基础）或 Gmail（OAuth2） | 开启两步验证需使用应用专用密码；推荐 Gmail API OAuth2 |
-| Outlook.com / Hotmail / Live | IMAP + SMTP 或 Microsoft Graph | IMAP+SMTP（基础）或 Outlook（OAuth2） | 推荐 Microsoft Graph OAuth2 方式 |
-| Microsoft 365 / Office 365 | Microsoft Graph 或 Exchange | Outlook（OAuth2）或 Exchange | 云端用 Graph API，本地部署用 Exchange |
-| QQ邮箱 | IMAP + SMTP | IMAP+SMTP | 使用授权码登录，非QQ密码 |
-| 163邮箱 / 126邮箱 | IMAP + SMTP | IMAP+SMTP | 使用授权码登录，非邮箱密码 |
-| 新浪邮箱 | IMAP + SMTP | IMAP+SMTP | 使用授权码 |
-| Foxmail | IMAP + SMTP | IMAP+SMTP | 同 QQ 邮箱后端配置 |
-| Yahoo Mail | IMAP + SMTP | IMAP+SMTP | 开启两步验证需使用应用专用密码 |
-| iCloud Mail | IMAP + SMTP | IMAP+SMTP | 需生成 App-Specific Password |
-| Zoho Mail | IMAP + SMTP | IMAP+SMTP | 标准 IMAP/SMTP 配置 |
-| ProtonMail | — | 不支持 | 免费版不支持 IMAP/SMTP |
-| 自建邮件服务器 | IMAP + SMTP | IMAP+SMTP | 兼容 Dovecot、Postfix 等 |
-| Exchange Server（本地部署） | Exchange Web Services | Exchange | 需安装 exchangelib 依赖 |
-
 ---
-
-> [English Documentation](README.md)
 
 ## 许可证
 

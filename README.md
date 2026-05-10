@@ -1,3 +1,5 @@
+[English](./README.md) | [中文](./README_zh.md)
+
 # ymailink
 
 **CLI email management tool for the terminal.** List, read, search, compose, reply, forward, move, copy, delete, and flag emails — all from the command line. Supports IMAP/SMTP, Outlook (Microsoft Graph API), Gmail (Google API), and Exchange backends.
@@ -258,29 +260,7 @@ pytest tests/
 - **Attachment downloads** from non-IMAP backends (Outlook/Gmail/Exchange) return metadata only — binary data download is not yet supported for those backends.
 - **Proxy support**: Set `HTTPS_PROXY` / `https_proxy` env var for Outlook and Gmail backends.
 
-## Supported Email Services
-
-ymailink works with any provider that exposes one of the supported protocols/APIs. Below are the most commonly used services:
-
-| Service | Protocol/API | Recommended Backend | Notes |
-|---------|-------------|-------------------|-------|
-| Gmail / Google Workspace | IMAP + SMTP or Google API | IMAP+SMTP (basic) or Gmail (OAuth2) | App password required for IMAP with 2FA; OAuth2 via Google API recommended |
-| Outlook.com / Hotmail / Live | IMAP + SMTP or Microsoft Graph | IMAP+SMTP (basic) or Outlook (OAuth2) | OAuth2 via Microsoft Graph recommended |
-| Microsoft 365 / Office 365 | Microsoft Graph or Exchange | Outlook (OAuth2) or Exchange | Exchange backend for on-prem; Graph API for cloud |
-| QQ邮箱 | IMAP + SMTP | IMAP+SMTP | Use authorization code (not email password) |
-| 163邮箱 / 126邮箱 | IMAP + SMTP | IMAP+SMTP | Use authorization code (not email password) |
-| 新浪邮箱 | IMAP + SMTP | IMAP+SMTP | Use authorization code |
-| Foxmail | IMAP + SMTP | IMAP+SMTP | Same as QQ mail backend |
-| Yahoo Mail | IMAP + SMTP | IMAP+SMTP | App password required with 2FA |
-| iCloud Mail | IMAP + SMTP | IMAP+SMTP | App-specific password required |
-| Zoho Mail | IMAP + SMTP | IMAP+SMTP | Standard IMAP/SMTP settings |
-| ProtonMail | — | Not supported | No IMAP/SMTP access on free plan |
-| Custom / Self-hosted | IMAP + SMTP | IMAP+SMTP | Works with Dovecot, Postfix, etc. |
-| Exchange Server (on-prem) | Exchange Web Services | Exchange | Requires exchangelib |
-
 ---
-
-> [中文文档](README_zh.md)
 
 ## License
 
