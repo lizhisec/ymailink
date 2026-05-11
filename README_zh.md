@@ -77,13 +77,13 @@ backend.login = "user@example.com"
 backend.auth.type = "password"
 backend.auth.cmd = "pass show email/imap"
 
-message.send.backend.type = "smtp"
-message.send.backend.host = "smtp.example.com"
-message.send.backend.port = 587
-message.send.backend.encryption = "start-tls"
-message.send.backend.login = "user@example.com"
-message.send.backend.auth.type = "password"
-message.send.backend.auth.cmd = "pass show email/smtp"
+send.backend.type = "smtp"
+send.backend.host = "smtp.example.com"
+send.backend.port = 587
+send.backend.encryption = "start-tls"
+send.backend.login = "user@example.com"
+send.backend.auth.type = "password"
+send.backend.auth.cmd = "pass show email/smtp"
 
 [ai]
 api-key = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

@@ -104,12 +104,12 @@ def _configure_imap(name: str, email_addr: str, display_name: str | None) -> Non
     print(f'backend.login = "{login}"')
     print(f'backend.auth.type = "password"')
     print(f'backend.auth.cmd = "pass show email/{name}"')
-    print(f'\nmessage.send.backend.type = "smtp"')
-    print(f'message.send.backend.host = "{smtp_host}"')
-    print(f"message.send.backend.port = {smtp_port}")
-    print(f'message.send.backend.login = "{login}"')
-    print(f'message.send.backend.auth.type = "password"')
-    print(f'message.send.backend.auth.cmd = "pass show email/{name}"')
+    print(f'\nsend.backend.type = "smtp"')
+    print(f'send.backend.host = "{smtp_host}"')
+    print(f"send.backend.port = {smtp_port}")
+    print(f'send.backend.login = "{login}"')
+    print(f'send.backend.auth.type = "password"')
+    print(f'send.backend.auth.cmd = "pass show email/{name}"')
 
 
 def _configure_outlook(name: str, email_addr: str, display_name: str | None) -> None:
@@ -124,9 +124,9 @@ def _configure_outlook(name: str, email_addr: str, display_name: str | None) -> 
     print(f'\nbackend.type = "outlook"')
     print(f'backend.client-id = "{client_id}"')
     print(f'backend.tenant-id = "{tenant_id}"')
-    print(f'\nmessage.send.backend.type = "outlook"')
-    print(f'message.send.backend.client-id = "{client_id}"')
-    print(f'message.send.backend.tenant-id = "{tenant_id}"')
+    print(f'\nsend.backend.type = "outlook"')
+    print(f'send.backend.client-id = "{client_id}"')
+    print(f'send.backend.tenant-id = "{tenant_id}"')
 
 
 def _configure_gmail(name: str, email_addr: str, display_name: str | None) -> None:
@@ -141,6 +141,6 @@ def _configure_gmail(name: str, email_addr: str, display_name: str | None) -> No
     print(f'\nbackend.type = "gmail"')
     print(f'backend.client-id = "{client_id}"')
     print(f'backend.client-secret = "{client_secret}"')
-    print(f'\nmessage.send.backend.type = "gmail"')
-    print(f'message.send.backend.client-id = "{client_id}"')
-    print(f'message.send.backend.client-secret = "{client_secret}"')
+    print(f'\nsend.backend.type = "gmail"')
+    print(f'send.backend.client-id = "{client_id}"')
+    print(f'send.backend.client-secret = "{client_secret}"')

@@ -17,13 +17,13 @@ backend.login = "john@example.com"
 backend.auth.type = "password"
 backend.auth.cmd = "pass show email/personal"
 
-message.send.backend.type = "smtp"
-message.send.backend.host = "smtp.example.com"
-message.send.backend.port = 587
-message.send.backend.encryption = "tls"
-message.send.backend.login = "john@example.com"
-message.send.backend.auth.type = "password"
-message.send.backend.auth.cmd = "pass show email/personal"
+send.backend.type = "smtp"
+send.backend.host = "smtp.example.com"
+send.backend.port = 587
+send.backend.encryption = "tls"
+send.backend.login = "john@example.com"
+send.backend.auth.type = "password"
+send.backend.auth.cmd = "pass show email/personal"
 
 # ---- Outlook account (Microsoft Graph API) ----
 [accounts.work]
@@ -33,9 +33,9 @@ backend.type = "outlook"
 backend.client-id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 backend.tenant-id = "common"
 
-message.send.backend.type = "outlook"
-message.send.backend.client-id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-message.send.backend.tenant-id = "common"
+send.backend.type = "outlook"
+send.backend.client-id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+send.backend.tenant-id = "common"
 
 # ---- Gmail account (Google Gmail API) ----
 [accounts.gmail]
@@ -45,6 +45,6 @@ backend.type = "gmail"
 backend.client-id = "xxxx.apps.googleusercontent.com"
 backend.client-secret = "GOCSPX-xxxx"
 
-message.send.backend.type = "gmail"
-message.send.backend.client-id = "xxxx.apps.googleusercontent.com"
-message.send.backend.client-secret = "GOCSPX-xxxx"
+send.backend.type = "gmail"
+send.backend.client-id = "xxxx.apps.googleusercontent.com"
+send.backend.client-secret = "GOCSPX-xxxx"

@@ -39,13 +39,13 @@ backend.auth.type = "password"
 backend.auth.raw = "your-password"
 
 # SMTP backend for sending emails
-message.send.backend.type = "smtp"
-message.send.backend.host = "smtp.example.com"
-message.send.backend.port = 587
-message.send.backend.encryption = "start-tls"
-message.send.backend.login = "user@example.com"
-message.send.backend.auth.type = "password"
-message.send.backend.auth.raw = "your-password"
+send.backend.type = "smtp"
+send.backend.host = "smtp.example.com"
+send.backend.port = 587
+send.backend.encryption = "start-tls"
+send.backend.login = "user@example.com"
+send.backend.auth.type = "password"
+send.backend.auth.raw = "your-password"
 ```
 
 ## Encryption Options
@@ -95,9 +95,9 @@ backend.client-id = "your-azure-app-client-id"
 backend.tenant-id = "common"
 # backend.client-secret = "optional-for-native-apps"
 
-message.send.backend.type = "outlook"
-message.send.backend.client-id = "your-azure-app-client-id"
-message.send.backend.tenant-id = "common"
+send.backend.type = "outlook"
+send.backend.client-id = "your-azure-app-client-id"
+send.backend.tenant-id = "common"
 ```
 
 **Setup steps:**
@@ -127,9 +127,9 @@ backend.type = "gmail"
 backend.client-id = "your-google-client-id"
 backend.client-secret = "your-google-client-secret"
 
-message.send.backend.type = "gmail"
-message.send.backend.client-id = "your-google-client-id"
-message.send.backend.client-secret = "your-google-client-secret"
+send.backend.type = "gmail"
+send.backend.client-id = "your-google-client-id"
+send.backend.client-secret = "your-google-client-secret"
 ```
 
 **Setup steps:**
@@ -162,10 +162,10 @@ backend.auth-type = "auto"
 # backend.auth-type = "ntlm"
 # backend.auth-type = "basic"
 
-message.send.backend.type = "exchange"
-message.send.backend.server = "mail.company.com"
-message.send.backend.username = "DOMAIN\\username"
-message.send.backend.auth-type = "auto"
+send.backend.type = "exchange"
+send.backend.server = "mail.company.com"
+send.backend.username = "DOMAIN\\username"
+send.backend.auth-type = "auto"
 ```
 
 **Auth types:**
@@ -197,13 +197,13 @@ backend.login = "you@gmail.com"
 backend.auth.type = "password"
 backend.auth.cmd = "pass show google/app-password"
 
-message.send.backend.type = "smtp"
-message.send.backend.host = "smtp.gmail.com"
-message.send.backend.port = 587
-message.send.backend.encryption = "start-tls"
-message.send.backend.login = "you@gmail.com"
-message.send.backend.auth.type = "password"
-message.send.backend.auth.cmd = "pass show google/app-password"
+send.backend.type = "smtp"
+send.backend.host = "smtp.gmail.com"
+send.backend.port = 587
+send.backend.encryption = "start-tls"
+send.backend.login = "you@gmail.com"
+send.backend.auth.type = "password"
+send.backend.auth.cmd = "pass show google/app-password"
 ```
 
 **Note:** Gmail requires an App Password if 2FA is enabled. Generate at https://myaccount.google.com/apppasswords

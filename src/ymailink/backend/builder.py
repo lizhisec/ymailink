@@ -47,12 +47,12 @@ class BackendBuilder:
 
     async def build_send_backend(self) -> SendBackend:
         """Build the send backend based on account config."""
-        if self._account.message.send is None:
+        if self._account.send is None:
             raise ValueError(
                 f"No send backend configured for account '{self._account_name}'"
             )
 
-        send_cfg = self._account.message.send.backend
+        send_cfg = self._account.send.backend
 
         if isinstance(send_cfg, SmtpConfig):
             from ymailink.backend.smtp import SmtpBackend

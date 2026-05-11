@@ -99,18 +99,11 @@ class FolderConfig(BaseModel):
     aliases: FolderAliases = Field(default_factory=FolderAliases)
 
 
-# ---- Message config ----
+# ---- Account config ----
 
 
 class SendConfig(BaseModel):
     backend: SendBackendConfig
-
-
-class MessageConfig(BaseModel):
-    send: SendConfig | None = None
-
-
-# ---- Account config ----
 
 
 class AccountConfig(BaseModel):
@@ -120,7 +113,7 @@ class AccountConfig(BaseModel):
     signature: str | None = None
     downloads_dir: Path | None = Field(default=None, alias="downloads-dir")
     backend: BackendConfig
-    message: MessageConfig = Field(default_factory=MessageConfig)
+    send: SendConfig | None = None
     folder: FolderConfig = Field(default_factory=FolderConfig)
 
     model_config = {"populate_by_name": True}
