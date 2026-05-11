@@ -1,8 +1,7 @@
 ---
 name: ymailink
-description: "Terminal email client for managing emails from the command line. Supports IMAP/SMTP, Outlook (Graph API), Gmail (Google API), and Exchange backends. Use this skill ANYTIME the user mentions email from the terminal — whether they say 'ymailink' by name, ask about sending/reading/searching emails via CLI, need help configuring an email account (IMAP, SMTP, Outlook, Gmail, Exchange), want to automate email notifications in shell scripts, or need to compose/reply/forward/move/copy/delete/flag emails. Also trigger when the user brings up email authentication (OAuth2, app passwords, IMAP credentials), mentions RFC 822 message format, wants to manage email folders, download attachments, or troubleshoot email delivery issues. This is the go-to skill for anything email-related in the terminal."
-homepage: "https://github.com/lizhisec/ymailink"
-metadata: {"clawdbot":{"emoji":"📧","requires":{"bins":["ymailink"]},"install":[{"id":"pip","kind":"pip","package":"ymailink","bins":["ymailink"],"label":"Install ymailink (pip)"}]}}
+description: "Terminal email client for managing emails from the command line. Supports IMAP/SMTP, Outlook (Graph API), Gmail (Google API), and Exchange backends, plus AI-powered email summarization and quick reply. Use this skill ANYTIME the user mentions email from the terminal — whether they say 'ymailink' by name, ask about sending/reading/searching emails via CLI, need help configuring an email account (IMAP, SMTP, Outlook, Gmail, Exchange), want to automate email notifications in shell scripts, or need to compose/reply/forward/move/copy/delete/flag emails. Also trigger when the user brings up email authentication (OAuth2, app passwords, IMAP credentials), mentions RFC 822 message format, wants to manage email folders, download attachments, or troubleshoot email delivery issues. Also trigger when the user wants AI-powered email summaries, one-line digests, or quick reply suggestions — this skill covers the `ymailink ai` commands. This is the go-to skill for anything email-related in the terminal."
+metadata: {"homepage":"https://github.com/lizhisec/ymailink","clawdbot":{"emoji":"📧","requires":{"bins":["ymailink"]},"install":[{"id":"pip","kind":"pip","package":"ymailink","bins":["ymailink"],"label":"Install ymailink (pip)"}]}}
 ---
 
 # ymailink Email CLI
@@ -20,13 +19,14 @@ ymailink is a Python CLI email client (v0.1.0) for managing emails from the term
 ## Prerequisites
 
 1. Python 3.11+ installed.
-2. `ymailink` installed: `pip install ymailink` or with extras: `pip install ymailink[outlook,gmail,keyring,exchange,all]`
+2. `ymailink` installed: `pip install ymailink` or with extras: `pip install ymailink[outlook,gmail,keyring,exchange,ai,all]`
 3. A configuration file at `~/.config/ymailink/config.toml` (or custom path via `-c`).
 4. IMAP/SMTP credentials, OAuth2 app registration, or Exchange server details.
+5. For AI features (`ymailink ai ...`): an API key configured under `[ai]` in config (see `references/configuration.md`).
 
 ## Quick Reference — All Commands
 
-Six command groups, 24 subcommands:
+Seven command groups, 27 subcommands:
 
 ### `account` — Manage accounts
 | Subcommand | Action |
@@ -82,6 +82,15 @@ Six command groups, 24 subcommands:
 | `template forward <id> [-f FOLDER]` | Generate forward template → stdout |
 | `template save [raw]` | Save template as draft (reads from file or stdin) |
 | `template send [raw]` | Send template from file or stdin |
+
+### `ai` — AI-powered email operations
+| Subcommand | Action |
+|------------|--------|
+| `ai short-summary <id> [-f FOLDER]` | One-line email summary |
+| `ai summary <id> [-f FOLDER]` | Detailed email summary |
+| `ai rapid-reply <id> [-f FOLDER]` | Quick reply suggestions (3) |
+
+**Note:** AI features require `[ai]` section in config (see `references/configuration.md`) and the `ai` extra: `pip install ymailink[ai]`. All three commands fetch the target email, send it to the AI API (`https://ai.ymailink.com`), and print the result.
 
 ## Global Flags
 
@@ -199,6 +208,24 @@ ymailink folder expunge "Trash"
 ymailink folder purge "Junk"
 ```
 
+### AI-powered email operations
+
+```bash
+# One-line summary of an email
+ymailink ai short-summary 42
+
+# Detailed summary
+ymailink ai summary 42
+
+# Quick reply suggestions (3 options)
+ymailink ai rapid-reply 42
+
+# Specify a different folder
+ymailink ai short-summary 42 --folder INBOX
+ymailink ai summary 42 --folder "Sent"
+ymailink ai rapid-reply 42 --folder "Archive"
+```
+
 ### Download attachments
 
 ```bash
@@ -248,6 +275,7 @@ ymailink mail list --folder INBOX --page 1 --page-size 20
 - **IMAP delete** is hard: sets `\Deleted` + EXPUNGE, permanently removing messages.
 - **Folder counts** (count, unread) are only populated by Outlook, Gmail, and Exchange backends — IMAP does not fetch them.
 - **Store passwords securely** using `pass`, system keyring (`pip install ymailink[keyring]`), or a command that outputs the password. Plaintext passwords in config are for testing only.
+- **AI features** require `pip install ymailink[ai]` and an `[ai]` section in config with an `api-key`. The default AI endpoint is `https://ai.ymailink.com`.
 - **OAuth2 tokens** are cached in `~/.config/ymailink/tokens/{provider}_{account}.json` (chmod 0600). Delete the file to force re-authorization.
 - **Proxy support** for Outlook and Gmail backends: set `HTTPS_PROXY` or `https_proxy` environment variable.
 - **Account not found** errors produce unhandled exceptions. Verify account names with `ymailink account list`.
@@ -256,7 +284,7 @@ ymailink mail list --folder INBOX --page 1 --page-size 20
 
 ## References
 
-- `references/configuration.md` — Full config setup: IMAP/SMTP/Outlook/Gmail/Exchange auth, password methods, OAuth2, folder aliases, signatures, proxy
+- `references/configuration.md` — Full config setup: IMAP/SMTP/Outlook/Gmail/Exchange auth, AI config, password methods, OAuth2, folder aliases, signatures, proxy
 - `references/message-composition.md` — RFC 822 format, headers, address formats, reply/forward quoting, compose workflows
 
 ## Debugging

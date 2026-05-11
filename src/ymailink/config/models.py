@@ -126,12 +126,24 @@ class AccountConfig(BaseModel):
     model_config = {"populate_by_name": True}
 
 
+# ---- AI config ----
+
+
+class AiConfig(BaseModel):
+    base_url: str = "https://ai.ymailink.com"
+    api_key: str | None = Field(default=None, alias="api-key")
+    model: str = "auto"
+
+    model_config = {"populate_by_name": True}
+
+
 # ---- Top-level config ----
 
 
 class YmailConfig(BaseModel):
     downloads_dir: Path | None = Field(default=None, alias="downloads-dir")
     accounts: dict[str, AccountConfig] = Field(default_factory=dict)
+    ai: AiConfig | None = None
 
     model_config = {"populate_by_name": True}
 

@@ -11,7 +11,9 @@
 - **Move, copy, delete, flag** messages (flags: seen, answered, flagged, deleted, draft)
 - **Manage folders** — list, create, delete, expunge, purge
 - **Download attachments**
+- **Download emails as .eml files** — save complete messages for offline archiving or import into other clients
 - **Template-based** message composition pipeline (great for scripting/automation)
+- **AI-powered email operations** — one-line summary, detailed summary, and quick reply suggestions
 - **Multiple accounts** with per-account configuration
 - **OAuth2** auto-refresh for Outlook (Microsoft Graph) and Gmail
 - **Multiple auth methods**: plain password, command-based (`pass`, `security`), system keyring
@@ -49,7 +51,8 @@ pip install ymailink[outlook]     # Microsoft Graph API support
 pip install ymailink[gmail]       # Google Gmail API support
 pip install ymailink[keyring]     # System keyring password storage
 pip install ymailink[exchange]    # Microsoft Exchange support
-pip install ymailink[all]         # All optional backends
+pip install ymailink[ai]          # AI-powered features
+pip install ymailink[all]         # All optional features
 ```
 
 Requires Python 3.11+.
@@ -81,6 +84,9 @@ message.send.backend.encryption = "start-tls"
 message.send.backend.login = "user@example.com"
 message.send.backend.auth.type = "password"
 message.send.backend.auth.cmd = "pass show email/smtp"
+
+[ai]
+api-key = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
 Or use the interactive wizard (prints config to stdout — copy-paste to the config file):
@@ -136,6 +142,7 @@ ymailink mail list
 | `mail copy <ids...> -t TARGET [-f FOLDER]` | Copy messages to folder |
 | `mail move <ids...> -t TARGET [-f FOLDER]` | Move messages to folder |
 | `mail delete <ids...> [-f FOLDER]` | Delete messages |
+| `mail download <ids...> [-f FOLDER] [-d DIR]` | Download messages as .eml files |
 | `flag add <ids...> -g FLAGS... [-f FOLDER]` | Add flags |
 | `flag set <ids...> -g FLAGS... [-f FOLDER]` | Replace all flags |
 | `flag remove <ids...> -g FLAGS... [-f FOLDER]` | Remove flags |
@@ -145,6 +152,9 @@ ymailink mail list
 | `template forward <id> [-f FOLDER]` | Generate forward template → stdout |
 | `template save [raw]` | Save template as draft |
 | `template send [raw]` | Send template from file or stdin |
+| `ai short-summary <id> [-f FOLDER]` | One-line email summary |
+| `ai summary <id> [-f FOLDER]` | Detailed email summary |
+| `ai rapid-reply <id> [-f FOLDER]` | Quick reply suggestions (3) |
 
 Running `ymailink` with no arguments is equivalent to: `ymailink mail list --folder INBOX --page 1 --page-size 20`
 
@@ -184,6 +194,9 @@ ymailink flag add 42 --flags seen --flags flagged
 # Download attachments
 ymailink attachment download 42 --dir ~/Downloads
 
+# Download emails as .eml files
+ymailink mail download 42 43 --dir ~/MailArchive
+
 # Template pipeline (compose offline, then send)
 ymailink template write > msg.txt
 vim msg.txt
@@ -192,8 +205,13 @@ ymailink template send msg.txt
 # JSON output for scripting
 ymailink --output json mail list
 
-# Switch account
+# Use a different account
 ymailink --account work mail list
+
+# AI-powered operations
+ymailink ai short-summary 42
+ymailink ai summary 42
+ymailink ai rapid-reply 42
 ```
 
 ### Available Flags
@@ -235,8 +253,9 @@ ymailink/
   src/ymailink/
     cli.py              — Argparse CLI dispatcher (lazy imports)
     backend/            — Backend implementations (IMAP, SMTP, Outlook, Gmail, Exchange)
-    commands/           — Command handlers (account, folder, mail, flag, attachment, template)
+    commands/           — Command handlers (account, folder, mail, flag, attachment, template, ai)
     config/             — Configuration loading and Pydantic models
+    ai/                 — AI API client and prompt assembly
     domain/             — Domain models (Summary, Message, Flag, Folder, Attachment, Account)
     output/             — Output formatting (plain, JSON, Rich tables)
     utils/              — Utilities (editor, password resolution, logging, paths)

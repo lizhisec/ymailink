@@ -38,6 +38,9 @@ def main(argv: list[str] | None = None) -> None:
     # ---- flag ----
     _register_flag(subparsers)
 
+    # ---- ai ----
+    _register_ai(subparsers)
+
 
     # ---- attachment ----
     _register_attachment(subparsers)
@@ -169,6 +172,12 @@ def _register_mail(subparsers: argparse._SubParsersAction) -> None:
     delete.add_argument("-f", "--folder", default="INBOX", help="folder name")
     delete.set_defaults(func=cmd_mail_delete)
 
+    download = sub.add_parser("download", help="download messages as .eml files")
+    download.add_argument("ids", nargs="+", help="message ids")
+    download.add_argument("-f", "--folder", default="INBOX", help="folder name")
+    download.add_argument("-d", "--dir", default=None, help="download directory")
+    download.set_defaults(func=cmd_mail_download)
+
 
 def _register_flag(subparsers: argparse._SubParsersAction) -> None:
     p = subparsers.add_parser("flag", aliases=["flags"], help="manage flags")
@@ -229,6 +238,26 @@ def _register_template(subparsers: argparse._SubParsersAction) -> None:
     send = sub.add_parser("send", help="send template")
     send.add_argument("raw", nargs="?", help="raw template or - for stdin")
     send.set_defaults(func=cmd_template_send)
+
+
+def _register_ai(subparsers: argparse._SubParsersAction) -> None:
+    p = subparsers.add_parser("ai", help="AI-powered email operations")
+    sub = p.add_subparsers(dest="subcommand")
+
+    ss = sub.add_parser("short-summary", help="one-line email summary")
+    ss.add_argument("id", help="message id")
+    ss.add_argument("-f", "--folder", default="INBOX", help="folder name")
+    ss.set_defaults(func=cmd_ai_short_summary)
+
+    summary = sub.add_parser("summary", help="detailed email summary")
+    summary.add_argument("id", help="message id")
+    summary.add_argument("-f", "--folder", default="INBOX", help="folder name")
+    summary.set_defaults(func=cmd_ai_summary)
+
+    rr = sub.add_parser("rapid-reply", help="quick reply suggestions (3)")
+    rr.add_argument("id", help="message id")
+    rr.add_argument("-f", "--folder", default="INBOX", help="folder name")
+    rr.set_defaults(func=cmd_ai_rapid_reply)
 
 
 # ==============================================================
@@ -326,6 +355,11 @@ def cmd_mail_delete(args: argparse.Namespace) -> None:
     mail_delete(args)
 
 
+def cmd_mail_download(args: argparse.Namespace) -> None:
+    from ymailink.commands.mail import mail_download
+    mail_download(args)
+
+
 def cmd_flag_add(args: argparse.Namespace) -> None:
     from ymailink.commands.flag import flag_add
     flag_add(args)
@@ -369,3 +403,18 @@ def cmd_template_save(args: argparse.Namespace) -> None:
 def cmd_template_send(args: argparse.Namespace) -> None:
     from ymailink.commands.template import template_send
     template_send(args)
+
+
+def cmd_ai_short_summary(args: argparse.Namespace) -> None:
+    from ymailink.commands.ai import ai_short_summary
+    ai_short_summary(args)
+
+
+def cmd_ai_summary(args: argparse.Namespace) -> None:
+    from ymailink.commands.ai import ai_summary
+    ai_summary(args)
+
+
+def cmd_ai_rapid_reply(args: argparse.Namespace) -> None:
+    from ymailink.commands.ai import ai_rapid_reply
+    ai_rapid_reply(args)

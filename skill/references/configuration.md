@@ -19,6 +19,7 @@ ymailink -c base.toml -c overrides.toml mail list
 > - [Multiple Accounts](#multiple-accounts)
 > - [Additional Options](#additional-options) (Signature, Downloads, Editor, Proxy)
 > - [OAuth2 Token Management](#oauth2-token-management)
+> - [AI Configuration](#ai-configuration)
 
 ## Minimal IMAP + SMTP Setup
 
@@ -283,3 +284,43 @@ For Outlook and Gmail backends, ymailink handles OAuth2 token acquisition and re
 Token file paths:
 - Outlook: `~/.config/ymailink/tokens/outlook_<account_name>.json`
 - Gmail: `~/.config/ymailink/tokens/gmail_<account_name>.json`
+
+## AI Configuration
+
+The AI features (`ymailink ai short-summary`, `summary`, `rapid-reply`) require an `[ai]` section in the config:
+
+```toml
+[ai]
+api-key = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# base-url = "https://ai.ymailink.com"   # optional, this is the default
+# model = "auto"                          # optional, this is the default
+```
+
+### Fields
+
+| Field | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `api-key` | **Yes** | — | AI API key for authentication |
+| `base-url` | No | `https://ai.ymailink.com` | AI API base URL |
+| `model` | No | `auto` | Model identifier (e.g. `gpt-4o`, `claude-3.5-sonnet`) |
+
+### Install AI extra
+
+```bash
+pip install ymailink[ai]
+```
+
+### Usage
+
+```bash
+# One-line short summary
+ymailink ai short-summary 42
+
+# Detailed summary
+ymailink ai summary 42
+
+# Quick reply suggestions (3 options)
+ymailink ai rapid-reply 42
+```
+
+All three commands fetch the email by ID from the configured account, send it to the AI API, and print the result. The `-f/--folder` flag specifies which folder to look in (default: `INBOX`).

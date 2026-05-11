@@ -11,7 +11,9 @@
 - **移动、复制、删除、标记** — 支持 seen/answered/flagged/deleted/draft 五种标记
 - **文件夹管理** — 列出、创建、删除、清除已删邮件、清空文件夹
 - **附件下载**
+- **下载 .eml 格式邮件** — 保存完整邮件到本地，可用于离线归档或导入其他客户端
 - **模板管道** — 基于模板的邮件撰写流水线，适合脚本化和自动化
+- **AI 邮件助手** — 一键精简总结、详细总结、快速回复建议
 - **多账户支持** — 每个账户独立配置
 - **OAuth2 自动刷新** — Outlook（Microsoft Graph）和 Gmail 自动刷新 Token
 - **多种认证方式** — 明文密码、命令式（`pass`、`security`）、系统密钥环
@@ -49,7 +51,8 @@ pip install ymailink[outlook]     # Microsoft Graph API 支持
 pip install ymailink[gmail]       # Google Gmail API 支持
 pip install ymailink[keyring]     # 系统密钥环密码存储
 pip install ymailink[exchange]    # Microsoft Exchange 支持
-pip install ymailink[all]         # 安装所有可选后端
+pip install ymailink[ai]          # AI 邮件助手功能
+pip install ymailink[all]         # 安装所有可选功能
 ```
 
 需要 Python 3.11+。
@@ -81,6 +84,9 @@ message.send.backend.encryption = "start-tls"
 message.send.backend.login = "user@example.com"
 message.send.backend.auth.type = "password"
 message.send.backend.auth.cmd = "pass show email/smtp"
+
+[ai]
+api-key = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
 也可以使用交互式配置向导（配置会输出到终端，手动复制到配置文件中）：
@@ -136,6 +142,7 @@ ymailink mail list
 | `mail copy <ids...> -t TARGET [-f FOLDER]` | 复制邮件到文件夹 |
 | `mail move <ids...> -t TARGET [-f FOLDER]` | 移动邮件到文件夹 |
 | `mail delete <ids...> [-f FOLDER]` | 删除邮件 |
+| `mail download <ids...> [-f FOLDER] [-d DIR]` | 下载邮件为 .eml 文件 |
 | `flag add <ids...> -g FLAGS... [-f FOLDER]` | 添加标记 |
 | `flag set <ids...> -g FLAGS... [-f FOLDER]` | 替换所有标记 |
 | `flag remove <ids...> -g FLAGS... [-f FOLDER]` | 移除标记 |
@@ -145,6 +152,9 @@ ymailink mail list
 | `template forward <id> [-f FOLDER]` | 生成转发模板 → 标准输出 |
 | `template save [raw]` | 将模板保存为草稿 |
 | `template send [raw]` | 从文件或标准输入发送模板 |
+| `ai short-summary <id> [-f FOLDER]` | 精简总结（一行） |
+| `ai summary <id> [-f FOLDER]` | 详细总结 |
+| `ai rapid-reply <id> [-f FOLDER]` | 快速回复建议（3条） |
 
 不传任何参数直接运行 `ymailink` 等同于：`ymailink mail list --folder INBOX --page 1 --page-size 20`
 
@@ -184,6 +194,9 @@ ymailink flag add 42 --flags seen --flags flagged
 # 下载附件
 ymailink attachment download 42 --dir ~/Downloads
 
+# 下载邮件为 .eml 格式
+ymailink mail download 42 43 --dir ~/MailArchive
+
 # 模板管道（离线撰写，稍后发送）
 ymailink template write > msg.txt
 vim msg.txt
@@ -194,6 +207,11 @@ ymailink --output json mail list
 
 # 切换账户
 ymailink --account work mail list
+
+# AI 邮件助手
+ymailink ai short-summary 42
+ymailink ai summary 42
+ymailink ai rapid-reply 42
 ```
 
 ### 可用标记
@@ -235,8 +253,9 @@ ymailink/
   src/ymailink/
     cli.py              — Argparse CLI 调度器（延迟导入）
     backend/            — 后端实现（IMAP、SMTP、Outlook、Gmail、Exchange）
-    commands/           — 命令处理（account、folder、mail、flag、attachment、template）
+    commands/           — 命令处理（account、folder、mail、flag、attachment、template、ai）
     config/             — 配置加载和 Pydantic 模型
+    ai/                 — AI API 客户端和请求数据组装
     domain/             — 领域模型（Summary、Message、Flag、Folder、Attachment、Account）
     output/             — 输出格式（plain、JSON、Rich 表格）
     utils/              — 工具（编辑器、密码解析、日志、路径）

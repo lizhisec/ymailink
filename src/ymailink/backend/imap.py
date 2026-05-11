@@ -8,9 +8,10 @@ import email.policy
 import email.utils
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.header import decode_header
 from functools import partial
+from time import localtime
 
 from imapclient import IMAPClient
 
@@ -119,6 +120,9 @@ class ImapBackend(ReadBackend):
 
             summary = self._parse_summary(str(uid), env_data, imap_flags)
             summaries.append(summary)
+
+        # Sort by date descending (newest first)
+        summaries.sort(key=lambda s: s.date or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
 
         return summaries
 
@@ -282,7 +286,10 @@ class ImapBackend(ReadBackend):
 
         date = env_data.date
         if date and date.tzinfo is None:
-            date = date.replace(tzinfo=timezone.utc)
+            # ENVELOPE date often lacks timezone info. Use the local
+            # system timezone so the displayed time matches the user's
+            # clock regardless of where in the world they are.
+            date = date.replace(tzinfo=_local_timezone())
 
         flags = [Flag.from_imap(f.decode() if isinstance(f, bytes) else f) for f in imap_flags]
         flags = [f for f in flags if isinstance(f, Flag)]
@@ -417,3 +424,10 @@ class ImapBackend(ReadBackend):
     async def _resolve_password(self, auth) -> str:
         from ymailink.utils.password import resolve_password
         return await resolve_password(auth)
+
+
+def _local_timezone() -> timezone:
+    """Return the local system timezone as a datetime.timezone."""
+    t = localtime()
+    # localtime returns a struct_time; tm_gmtoff is the UTC offset in seconds
+    return timezone(timedelta(seconds=t.tm_gmtoff))

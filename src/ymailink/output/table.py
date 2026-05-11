@@ -24,7 +24,7 @@ def render_summary_table(summaries: list[Summary]) -> None:
     table.add_column("Flags", width=5)
     table.add_column("From", min_width=20)
     table.add_column("Subject", min_width=30)
-    table.add_column("Date", width=16)
+    table.add_column("Date", width=19)
 
     for s in summaries:
         flags = _format_flags(s.flags)

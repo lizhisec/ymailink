@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import re
 import sys
+from pathlib import Path
 
 from ymailink.config import load_config
 from ymailink.output.printer import get_printer
@@ -259,6 +261,45 @@ async def _mail_delete(args: argparse.Namespace) -> None:
         printer.log(f"Deleted {len(args.ids)} message(s).")
 
 
+def mail_download(args: argparse.Namespace) -> None:
+    """Download messages as .eml files."""
+    asyncio.run(_mail_download(args))
+
+
+async def _mail_download(args: argparse.Namespace) -> None:
+    from ymailink.backend.builder import BackendBuilder
+
+    config = load_config(args.config_paths)
+    printer = get_printer(args)
+    builder = BackendBuilder(config, args.account)
+
+    # Resolve download directory
+    download_dir = Path(args.dir) if args.dir else None
+    if download_dir is None:
+        _, acct = config.get_account(args.account)
+        download_dir = acct.downloads_dir or config.downloads_dir
+    if download_dir is None:
+        download_dir = Path.home() / "Downloads"
+    download_dir = Path(download_dir).expanduser()
+    download_dir.mkdir(parents=True, exist_ok=True)
+
+    backend = await builder.build_read_backend()
+    async with backend:
+        messages = await backend.get_messages(args.folder, args.ids)
+        if not messages:
+            printer.error(f"No messages found for ids: {args.ids}")
+
+        for msg in messages:
+            filepath = _eml_filepath(msg, download_dir)
+
+            if msg.raw is None:
+                printer.log(f"Message {msg.id} has no raw data, skipping.")
+                continue
+
+            filepath.write_bytes(msg.raw)
+            printer.log(f"Downloaded: {filepath} ({len(msg.raw)} bytes)")
+
+
 # ---- Template helpers ----
 
 
@@ -337,3 +378,34 @@ def _forward_template(msg, from_email: str) -> str:
         f"\n"
         f"{fwd_body}"
     )
+
+
+def _eml_filepath(msg, download_dir: Path) -> Path:
+    """Generate a safe, non-conflicting .eml file path for a message."""
+    subject = (msg.subject or "").strip()
+    if not subject:
+        return download_dir / f"message-{msg.id}.eml"
+
+    safe = []
+    for ch in subject:
+        if ch.isalnum() or ch in (' ', '-', '_', '.'):
+            safe.append(ch)
+        elif ch in (',', ';', ':', '!', '?', '(', ')', '[', ']', '@', '#', '+', '=', '~', '&', "'"):
+            safe.append(ch)
+        else:
+            safe.append('_')
+
+    filename = "".join(safe).strip()
+    filename = re.sub(r'[ _]+', '_', filename)
+    max_len = 200
+    if len(filename) > max_len:
+        filename = filename[:max_len].rstrip('_').rstrip('.')
+
+    if not filename:
+        return download_dir / f"message-{msg.id}.eml"
+
+    filepath = download_dir / f"{filename}.eml"
+    # Avoid overwriting: append message id if file already exists
+    if filepath.exists():
+        filepath = download_dir / f"{filename}-{msg.id}.eml"
+    return filepath

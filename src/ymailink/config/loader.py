@@ -13,9 +13,10 @@ def load_config(paths: list[str] | None = None) -> YmailConfig:
     """Load and merge config from one or more TOML files.
 
     If no paths given, uses the default config path.
+    Pass an empty list to get an empty config without reading any file.
     Multiple files are merged left-to-right (later overrides earlier).
     """
-    if not paths:
+    if paths is None:
         default_path = get_default_config_path()
         if default_path.exists():
             paths = [str(default_path)]
