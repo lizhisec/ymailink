@@ -34,10 +34,16 @@ pip install "git+https://github.com/lizhisec/ymailink.git#egg=ymailink[all]"
 pip install "git+https://github.com/lizhisec/ymailink.git#egg=ymailink[outlook,gmail,keyring,exchange,ai]"
 ```
 
-If pip from GitHub is slow or blocked, use Tsinghua mirror:
+If GitHub is inaccessible, use Gitee mirror as the git source:
 ```bash
-pip install -i https://pypi.tuna.tsinghua.edu.cn/simple git+https://github.com/lizhisec/ymailink.git
+pip install git+https://gitee.com/w3hsec/ymailink.git
 ```
+
+```bash
+# With optional dependencies
+pip install "git+https://gitee.com/w3hsec/ymailink.git#egg=ymailink[all]"
+```
+
 
 ## Prerequisites
 
