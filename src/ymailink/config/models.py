@@ -143,7 +143,10 @@ class YmailConfig(BaseModel):
     def get_account(self, name: str | None = None) -> tuple[str, AccountConfig]:
         """Get account by name, or the default account."""
         if not self.accounts:
-            raise ValueError("No accounts configured")
+            raise ValueError(
+                "No accounts configured. Run 'ymailink account configure' "
+                "to set up your first account."
+            )
 
         if name:
             if name not in self.accounts:

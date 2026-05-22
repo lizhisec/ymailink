@@ -105,8 +105,18 @@ async def _resolve_email(
 
     ai_cfg = config.ai
     if not ai_cfg or not ai_cfg.api_key:
-        printer.error("AI config is missing or api-key is not set.")
-        return config, printer, ai_cfg, None  # unreachable but defensive
+        # Fallback: try ~/.taiji/config.json first, then env vars
+        from ymailink.utils.taiji import load_taiji_config
+
+        taiji = load_taiji_config()
+        if taiji["api_key"]:
+            ai_cfg = AiConfig(
+                base_url=taiji["base_url"] or "https://ai.ymailink.com",
+                api_key=taiji["api_key"],
+            )
+        else:
+            printer.error("AI config is missing or api-key is not set.")
+            return config, printer, ai_cfg, None  # unreachable but defensive
 
     builder = BackendBuilder(config, args.account)
     backend = await builder.build_read_backend()

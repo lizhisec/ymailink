@@ -55,20 +55,27 @@ def main(argv: list[str] | None = None) -> None:
         from ymailink.utils.logging import configure_logging
         configure_logging(debug=True)
 
-    # Default: no subcommand → mail list
-    if args.command is None:
-        args.folder = "INBOX"
-        args.page = 1
-        args.page_size = 20
-        args.query = None
-        cmd_mail_list(args)
-        return
+    try:
+        # Default: no subcommand → mail list
+        if args.command is None:
+            args.folder = "INBOX"
+            args.page = 1
+            args.page_size = 20
+            args.query = None
+            cmd_mail_list(args)
+            return
 
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
-        sys.exit(1)
+        if hasattr(args, "func"):
+            args.func(args)
+        else:
+            parser.print_help()
+            sys.exit(1)
+    except ValueError as e:
+        msg = str(e)
+        if "No accounts configured" in msg:
+            print(f"ymailink: {msg}", file=sys.stderr)
+            sys.exit(1)
+        raise
 
 
 # ==============================================================

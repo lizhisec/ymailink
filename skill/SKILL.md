@@ -1,6 +1,6 @@
 ---
 name: ymailink
-description: "Terminal email client for managing emails from the command line. Supports IMAP/SMTP, Outlook (Graph API), Gmail (Google API), and Exchange backends, plus AI-powered email summarization and quick reply. Use this skill ANYTIME the user mentions email from the terminal — whether they say 'ymailink' by name, ask about sending/reading/searching emails via CLI, need help configuring an email account (IMAP, SMTP, Outlook, Gmail, Exchange), want to automate email notifications in shell scripts, or need to compose/reply/forward/move/copy/delete/flag emails. Also trigger when the user brings up email authentication (OAuth2, app passwords, IMAP credentials), mentions RFC 822 message format, wants to manage email folders, download attachments, or troubleshoot email delivery issues. Also trigger when the user wants AI-powered email summaries, one-line digests, or quick reply suggestions — this skill covers the `ymailink ai` commands. This is the go-to skill for anything email-related in the terminal."
+description: "Terminal email client for managing emails from the command line. Supports IMAP/SMTP, Outlook (Graph API), Gmail (Google API), and Exchange backends, plus AI-powered email summarization and quick reply. Use this skill ANYTIME the user mentions email from the terminal — whether they say 'ymailink' by name, ask about sending/reading/searching emails via CLI, need help configuring an email account (IMAP, SMTP, Outlook, Gmail, Exchange), want to automate email notifications in shell scripts, or need to compose/reply/forward/move/copy/delete/flag emails. Also trigger when the user brings up email authentication (OAuth2, app passwords, IMAP credentials), mentions RFC 822 message format, wants to manage email folders, download attachments, or troubleshoot email delivery issues. Also trigger when the user wants AI-powered email summaries, one-line digests, or quick reply suggestions — this skill covers the `ymailink ai` commands. This is the go-to skill for anything email-related in the terminal. Before using ymailink commands, verify it is installed (see Installation section in the skill body)."
 metadata: {"homepage":"https://github.com/lizhisec/ymailink","clawdbot":{"emoji":"📧","requires":{"bins":["ymailink"]},"install":[{"id":"pip","kind":"pip","package":"ymailink","bins":["ymailink"],"label":"Install ymailink (pip)"}]}}
 ---
 
@@ -16,10 +16,33 @@ ymailink is a Python CLI email client (v0.1.0) for managing emails from the term
 | **Gmail** (Google API) | google-api-python-client | google-api-python-client | OAuth2 (local server) |
 | **Exchange** | exchangelib | exchangelib | password (auto/NTLM/basic) |
 
+## Installation
+
+**Before using any ymailink commands, always verify ymailink is installed first.** Run `which ymailink` or `ymailink --version`. If not installed, guide the user to run:
+
+```bash
+pip install git+https://github.com/lizhisec/ymailink.git
+```
+
+To install with optional dependencies (for specific backends or AI features):
+
+```bash
+# Install with all optional dependencies
+pip install "git+https://github.com/lizhisec/ymailink.git#egg=ymailink[all]"
+
+# Or install specific extras
+pip install "git+https://github.com/lizhisec/ymailink.git#egg=ymailink[outlook,gmail,keyring,exchange,ai]"
+```
+
+If pip from GitHub is slow or blocked, use Tsinghua mirror:
+```bash
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple git+https://github.com/lizhisec/ymailink.git
+```
+
 ## Prerequisites
 
 1. Python 3.11+ installed.
-2. `ymailink` installed: `pip install ymailink` or with extras: `pip install ymailink[outlook,gmail,keyring,exchange,ai,all]`
+2. `ymailink` installed (see Installation section above).
 3. A configuration file at `~/.config/ymailink/config.toml` (or custom path via `-c`).
 4. IMAP/SMTP credentials, OAuth2 app registration, or Exchange server details.
 5. For AI features (`ymailink ai ...`): an API key configured under `[ai]` in config (see `references/configuration.md`).
