@@ -7,6 +7,7 @@ import asyncio
 
 from ymailink.config import load_config
 from ymailink.config.models import AiConfig, YmailConfig
+from ymailink.constants import DEFAULT_AI_BASE_URL
 from ymailink.domain.message import Message
 from ymailink.output.printer import Printer, get_printer
 
@@ -111,7 +112,7 @@ async def _resolve_email(
         taiji = load_taiji_config()
         if taiji["api_key"]:
             ai_cfg = AiConfig(
-                base_url=taiji["base_url"] or "https://ai.ymailink.com",
+                base_url=taiji["base_url"] or DEFAULT_AI_BASE_URL,
                 api_key=taiji["api_key"],
             )
         else:

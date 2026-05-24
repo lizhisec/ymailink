@@ -134,6 +134,11 @@ Seven command groups, 27 subcommands:
 
 ## Configuration Setup
 
+> **CRITICAL — Two most common config mistakes to avoid:**
+> 1. Section header MUST be `[accounts.<name>]` (plural **accounts**), never `[account.<name>]` (singular). Wrong: `[account.qq]`. Right: `[accounts.qq]`.
+> 2. Backend fields MUST use TOML dotted-key syntax under the account section. Wrong: creating a separate `[backend]` section. Right: `backend.type = "imap"` indented under `[accounts.xxx]`.
+> 3. After writing config, verify immediately: `ymailink account list`. If nothing shows, the section header or dotted keys are wrong.
+
 ### Interactive wizard
 
 ```bash
@@ -142,7 +147,61 @@ ymailink account configure
 
 This prompts for account details and prints the resulting TOML config to stdout. **It does not write the file** — you need to copy-paste the output to `~/.config/ymailink/config.toml`.
 
-See `references/configuration.md` for manual config setup with all backend types (IMAP/SMTP, Outlook, Gmail, Gmail-via-IMAP, Exchange), password auth methods (raw/cmd/keyring), OAuth2 token management, folder aliases, signatures, download directories, and proxy support.
+### Quick template: IMAP + SMTP (most common)
+
+This is the most common setup. Copy-paste and fill in your credentials:
+
+```toml
+[accounts.YOUR_ACCOUNT_NAME]
+email = "you@example.com"
+display-name = "Your Name"
+default = true
+
+# IMAP backend for reading emails
+backend.type = "imap"
+backend.host = "imap.example.com"
+backend.port = 993
+backend.encryption = "tls"
+backend.login = "you@example.com"
+backend.auth.type = "password"
+backend.auth.raw = "your-app-password"
+
+# SMTP backend for sending emails
+send.backend.type = "smtp"
+send.backend.host = "smtp.example.com"
+send.backend.port = 465
+send.backend.encryption = "tls"
+send.backend.login = "you@example.com"
+send.backend.auth.type = "password"
+send.backend.auth.raw = "your-app-password"
+```
+
+**How to adapt this template:**
+1. Replace `YOUR_ACCOUNT_NAME` with a short name (e.g. `qq`, `personal`, `work`).
+2. Replace all `you@example.com` with your email address.
+3. Replace `imap.example.com` / `smtp.example.com` with your provider's servers (see table below).
+4. Set `message.send.backend.port` to 465 for TLS or 587 for STARTTLS.
+5. Replace `your-app-password` with your password or app-specific password.
+6. Set `default = true` on exactly ONE account. Remove from others or set to `false`.
+
+**Common email provider servers:**
+
+| Provider | IMAP host | IMAP port | SMTP host | SMTP port | Notes |
+|----------|-----------|-----------|-----------|-----------|-------|
+| QQ Mail | `imap.qq.com` | 993 | `smtp.qq.com` | 465 | Enable IMAP in QQ settings first |
+| Gmail | `imap.gmail.com` | 993 | `smtp.gmail.com` | 587 | Requires App Password if 2FA on |
+| Outlook.com | `outlook.office365.com` | 993 | `smtp.office365.com` | 587 | |
+| 163 Mail | `imap.163.com` | 993 | `smtp.163.com` | 465 | Enable IMAP in 163 settings |
+| 126 Mail | `imap.126.com` | 993 | `smtp.126.com` | 465 | |
+
+**Verify your config before use:**
+```bash
+ymailink account list          # Should show your account names
+ymailink account doctor        # Should say OK for both IMAP and SMTP
+ymailink mail list             # Should list inbox emails
+```
+
+For other backends (Outlook API, Gmail API, Exchange), password options (cmd/keyring), folder aliases, signatures, OAuth2, proxy, and AI features, see `references/configuration.md`.
 
 ## Common Workflows
 

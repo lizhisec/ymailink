@@ -68,7 +68,44 @@ class SmtpBackend(SendBackend):
         if not recipients:
             raise RuntimeError("No recipients found in the message")
 
+        raw = self._ensure_header_encoding(msg, raw)
         await self._client.sendmail(sender, recipients, raw)
+
+    @staticmethod
+    def _ensure_header_encoding(msg, raw: bytes) -> bytes:
+        """Check for non-ASCII headers and RFC 2047 encode them if needed."""
+        for key in msg.keys():
+            for val in msg.get_all(key) or []:
+                try:
+                    str(val).encode("ascii")
+                except UnicodeEncodeError:
+                    # non-ASCII found -> rebuild with SMTP policy
+                    from email.message import EmailMessage
+                    from email import policy as email_policy
+
+                    fixed = EmailMessage(policy=email_policy.SMTP)
+                    for k in msg.keys():
+                        for v in msg.get_all(k) or []:
+                            fixed[k] = str(v)
+                    if msg.is_multipart():
+                        for part in msg.iter_parts():
+                            payload = part.get_payload(decode=True)
+                            if payload is not None:
+                                content_type = part.get_content_type()
+                                main, sub = content_type.split("/", 1)
+                                fixed.add_attachment(
+                                    payload,
+                                    maintype=main,
+                                    subtype=sub,
+                                    filename=part.get_filename(),
+                                )
+                    else:
+                        payload = msg.get_payload(decode=True)
+                        if payload:
+                            charset = msg.get_content_charset() or "utf-8"
+                            fixed.set_content(payload.decode(charset, errors="replace"))
+                    return fixed.as_bytes()
+        return raw
 
     async def _resolve_password(self, auth: PasswordAuth) -> str:
         from ymailink.utils.password import resolve_password

@@ -7,6 +7,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field
 
+from ymailink.constants import DEFAULT_AI_BASE_URL
+
 
 # ---- Auth models ----
 
@@ -123,7 +125,7 @@ class AccountConfig(BaseModel):
 
 
 class AiConfig(BaseModel):
-    base_url: str = "https://ai.ymailink.com"
+    base_url: str = Field(default=DEFAULT_AI_BASE_URL, alias="base-url")
     api_key: str | None = Field(default=None, alias="api-key")
     model: str = "auto"
 
